@@ -183,14 +183,12 @@ class HomeContainer extends Component {
 
     handleChange = (e) => {
         let searchTxt = e.target.value;
-        
         this.setState({ 
             searchedAddress: searchTxt,
             suggestions: [],
             listActive: false,
             searched: false
         }); 
-       
     }
 
     handleChangeSelecteDay = (e) => {
