@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {PermIdentity, ArrowDownward, ArrowUpward} from '@material-ui/icons';
 
+//Styles
 import { styles } from './styles';
 
 const TableBBB = (props) => {

@@ -42,14 +42,6 @@ const BarChart = (props) => {
         legend = false;
     }
 
-    // let barColor = [];
-    // let i = 0;
-    
-    // for(i=0; i < sizeObject; i++){
-    //     barColor.push('rgba(0,139,139,0.3)');
-    // }
-
-    
     const data = {
         labels: labels,
         datasets: dataset        
@@ -61,7 +53,6 @@ const BarChart = (props) => {
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    // Include a dollar sign in the ticks
                     callback: function(value, index, values) {
                         return '' + value;
                     }

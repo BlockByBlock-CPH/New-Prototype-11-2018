@@ -8,7 +8,7 @@ import { styles } from './styles';
 
 class Autocomplete  extends Component {
     render(){
-        const { suggestions, selectAddress, classes } = this.props;
+        const { classes, suggestions, selectAddress } = this.props;
         
         if(suggestions === []){
             return false;

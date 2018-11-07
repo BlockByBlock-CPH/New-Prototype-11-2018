@@ -12,7 +12,7 @@ import { styles } from './styles';
 
 const DrawerLeft = (props) => {
     const { classes, anchor, open, handleDrawerClose, searchAddress, handleChange, 
-        searchedAddress, suggestions, listActive, selectAddress, btnFormDisabled } = props;
+            searchedAddress, suggestions, listActive, selectAddress, selectedDay, handleChangeSelecteDay } = props;
     return (
         <Drawer
             variant="persistent"
@@ -33,7 +33,8 @@ const DrawerLeft = (props) => {
                 suggestions={suggestions}
                 listActive={listActive}
                 selectAddress={selectAddress}
-                btnFormDisabled={btnFormDisabled}
+                selectedDay={selectedDay}
+                handleChangeSelecteDay={handleChangeSelecteDay}
             /> 
         </Drawer>
     )

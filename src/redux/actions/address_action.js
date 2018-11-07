@@ -9,53 +9,11 @@ import {
 } from '../../constants/apis';
 
 
-// export function searchAddress(address) {
-//     return async (dispatch, getState) => {
-//         dispatch({ type: GET_ADDRESS_REQUEST });
-//         try {
-//             const response = await axios.get(API_PHOTON+address);
-//             dispatch({ type: GET_ADDRESS_SUCCESS, payload: response });    
-
-//             const { infoAddress } = getState().address;
-//             dispatch(makeSuggestions(infoAddress));
-
-
-//         } catch (error) {
-//             dispatch({ type: GET_ADDRESS_FAILURE, payload: error });
-//         }
-//     }
-// }
-
-// //ACTION SUGGESTIONS FEATURE
-// function makeSuggestions(data){
-//     return (dispatch) => {  
-
-//         let suggestions = data.map((resp,index) =>{
-//             const country = (resp.address.country === undefined) ? '' : resp.address.country;
-//             const city = (resp.address.city === undefined) ? '' : resp.address.city+',';
-//             const street = (resp.address.street === undefined) ? '' : resp.address.street;
-//             const housenumber = (resp.address.housenumber === undefined) ? '' : resp.address.housenumber+',';
-//             // const postcode = (resp.address.postcode === undefined) ? '' : resp.address.postcode;
-//             // const state = (resp.address.state === undefined) ? '' : resp.address.state+',';
-//             //const name = (resp.address.name === undefined) ? '' : resp.address.name+',';
-//             const longitude = resp.lon; 
-//             const latitude = resp.lat;
-            
-//             //list_suggestions = { values : `${street} ${housenumber} ${name} ${postcode} ${city} ${state} ${country}`};
-//             const list_suggestions = {id: index, coord: { longitude, latitude }, value: `${street} ${housenumber} ${city} ${country}`};
-        
-//             return list_suggestions;
-//         });
-        
-//         dispatch({ type: SET_SUGGESTIONS, payload: suggestions });
-//     }
-// }
-
 export function setChosenLocation(data, selectedDay){
     return (dispatch) => {              
         const chosenLocation = data;
-        const longAddress = chosenLocation.longitude;  // TODO: CUANDO tenga el suggestions cambiar esto
-        const latAddress = chosenLocation.latitude;  // TODO: CUANDO tenga el suggestions cambiar esto
+        const longAddress = chosenLocation.longitude;
+        const latAddress = chosenLocation.latitude;
         const coordAddress = { latAddress: latAddress, longAddress: longAddress }
         const pointAddress = 'POINT(' + longAddress + ' ' + latAddress + ')';
         const day = parseInt(selectedDay, 10);
@@ -65,9 +23,6 @@ export function setChosenLocation(data, selectedDay){
             const mainChart = WEEK+params;
             const tableHome = QUERY_3_4+params;
             const topChart = [QUERY17,QUERY18];
-            // const query2 = WEEK_HOUR+params;
-            // const query3 = QUERY13+params;
-            // const url_main_chart = [main_chart];
             const selectedInfo = { 
                 coordAddress: coordAddress, 
                 pointAddress: pointAddress, 
@@ -146,36 +101,3 @@ function getDataTop(geoURL){
         }
     }
 }
-
-
-
-
-
-
-
-
-// function getPolygon(geoURL){
-//     return async (dispatch) => {
-//         dispatch({ type: GET_GEODATA_REQUEST });
-//         try {
-//             const geo_url_len = Object.keys(geoURL).length;
-//             if(geo_url_len === 1){
-//                 const geodata = await axios.get(geoURL);
-//                 dispatch({ type: GET_GEODATA_SUCCESS, payload: geodata.data });   
-//             }else if(geo_url_len > 1){
-//                 const geodata = await axios.get(geoURL[0]);
-//                 const line = await axios.get(geoURL[1]);
-//                 const area = await axios.get(geoURL[2]);
-//                 const geodata = {
-//                     bar: bar.data,
-//                     line: line.data,
-//                     area: area.data                
-//                 }               
-//                 dispatch({ type: GET_GEODATA_SUCCESS, payload: geodata });
-//             }
-
-//         } catch (error) {
-//             dispatch({ type: GET_GEODATA_FAILURE, payload: error });
-//         }
-//     }
-// }

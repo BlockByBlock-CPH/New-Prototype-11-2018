@@ -41,14 +41,15 @@ class HomeContainer extends Component {
           dataTop: {},
           loading: true,
           searchedAddress: '',
-          searchedCoord: {},
+          selectedCoord: {},
           listActive: false,
           addressInfo: {},
           suggestions: [],
           polygonZone: [],
-          btnFormDisabled: true,
           totalDataMC: 0,
-          totalDataTH: 0
+          totalDataTH: 0,
+          selectedAddress: false,
+          selectedDay: 0
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -61,6 +62,7 @@ class HomeContainer extends Component {
         this.handleDrawerClose = this.handleDrawerClose.bind(this);
         this.searchAddress = this.searchAddress.bind(this);
         this.makeSuggestions = this.makeSuggestions.bind(this);
+        this.handleChangeSelecteDay = this.handleChangeSelecteDay.bind(this);
     }
 
     componentDidMount(){
@@ -71,7 +73,7 @@ class HomeContainer extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         // only update chart if the data has changed
-        if(prevState.searchedAddress !== this.state.searchedAddress) {
+        if(this.state.searched !== prevState.searched){
             this.searchAddress(this.state.searchedAddress);
         } else if(this.props.mainChart !== prevProps.mainChart) {
             if(this.props.mainChart.totalFeatures > 0){
@@ -108,23 +110,23 @@ class HomeContainer extends Component {
           axios.get(API_GEOCODER)
           .then((response) => {
             let addressInfo = response.data.features.map(res => {
-              return {
-                  lon: parseFloat(res.geometry.coordinates[0],10),
-                  lat: parseFloat(res.geometry.coordinates[1],10),
-                  address:{
-                      name:res.properties.name,
-                      street: res.properties.street,
-                      housenumber: res.properties.housenumber,
-                      postcode:res.properties.postcode,
-                      city:res.properties.city,
-                      state:res.properties.state,
-                      country:res.properties.country
-                  },
-                  original:{
-                      formatted:res.properties.name,
-                      details:res.properties
-                  }
-              }
+                return {
+                    lon: parseFloat(res.geometry.coordinates[0],10),
+                    lat: parseFloat(res.geometry.coordinates[1],10),
+                    address:{
+                        name:res.properties.name,
+                        street: res.properties.street,
+                        housenumber: res.properties.housenumber,
+                        postcode:res.properties.postcode,
+                        city:res.properties.city,
+                        state:res.properties.state,
+                        country:res.properties.country
+                    },
+                    original:{
+                        formatted:res.properties.name,
+                        details:res.properties
+                    }
+                }
             });
     
             this.makeSuggestions(addressInfo);
@@ -143,14 +145,11 @@ class HomeContainer extends Component {
             const city = (resp.address.city === undefined) ? '' : resp.address.city+',';
             const street = (resp.address.street === undefined) ? '' : resp.address.street;
             const housenumber = (resp.address.housenumber === undefined) ? '' : resp.address.housenumber+',';
-            // const postcode = (resp.address.postcode === undefined) ? '' : resp.address.postcode;
-            // const state = (resp.address.state === undefined) ? '' : resp.address.state+',';
-            //const name = (resp.address.name === undefined) ? '' : resp.address.name+',';
+            const name = (resp.address.name === undefined) ? '' : resp.address.name+',';
             const longitude = resp.lon; 
             const latitude = resp.lat;
             
-            //list_suggestions = { values : `${street} ${housenumber} ${name} ${postcode} ${city} ${state} ${country}`};
-            list_suggestions = {id: index, coord: { longitude, latitude }, value: `${street} ${housenumber} ${city} ${country}`};
+            list_suggestions = {id: index, coord: { longitude, latitude }, value: `${name} ${street} ${housenumber} ${city} ${country}`};
 
             return list_suggestions;
         });
@@ -183,53 +182,57 @@ class HomeContainer extends Component {
     }
 
     handleChange = (e) => {
-        let text = e.target.value;
-        let len = e.target.value.length;
+        let searchTxt = e.target.value;
         
         this.setState({ 
-          searchedAddress: text,
-          listActive: true
-        });
-
-        if(len === 0){
-            this.setState({ 
-                btnFormDisabled: true
-            });
-        }
+            searchedAddress: searchTxt,
+            suggestions: [],
+            listActive: false,
+            searched: false
+        }); 
+       
     }
 
-    //OnClick Listcomponent
-    selectAddress = (e) => {
+    handleChangeSelecteDay = (e) => {
+        let selectedDay = e.target.value;
+        this.setState({ 
+            selectedDay: selectedDay          
+        });    
+    }
+
+    //OnClick AutocompleteComponent
+    selectAddress = (event) => {
         const suggestions = [...this.state.suggestions];
-        const selectAddress = suggestions.filter(s => s.id === parseInt(e.target.id,10) );
+        const { selectedDay } = this.state;
+        const selectAddress = suggestions.filter(s => s.id === parseInt(event.target.id,10));
+
+        this.props.setChosenLocation(selectAddress[0].coord, selectedDay);
         
         this.setState({ 
-            searchedAddress: selectAddress[0].value, 
+            selectedCoord: selectAddress[0].coord,
             listActive: false,
-            searchedCoord: selectAddress[0].coord,
-            btnFormDisabled: false
+            openRight: true,
+            openLeft: false,
+            selectedAddress: true,
+            searched: false,
+            suggestions: []
         });
     }
 
     handleClick = (event) => {
-        event.preventDefault();
-        const { searchedCoord } = this.state;
-        const selectedDay = event.target.selectDay.value;
-        this.props.setChosenLocation(searchedCoord,selectedDay);         
-
+        event.preventDefault();              
         this.setState({
             searched: true,
-            openRight: true,
-            openLeft: false
-        });
+            listActive: true
+        });        
     }
 
     render() {
         
         const { classes, setInitMap, selectedInfo, initialMap  } = this.props;
         const { anchorLeft, openLeft, anchorRight, openRight, appTitleHeader, titleRP, 
-            loading, searched, dataMC, dataTH, dataTop, searchedAddress, listActive, 
-            suggestions, polygonZone, btnFormDisabled, totalDataMC, totalDataTH } = this.state;
+                loading, dataMC, dataTH, dataTop, searchedAddress, listActive, suggestions, 
+                polygonZone, totalDataMC, totalDataTH, selectedAddress, selectedDay } = this.state;
 
         if(loading === true){
             return (
@@ -255,23 +258,24 @@ class HomeContainer extends Component {
                         searchAddress={this.handleClick}
                         handleChange={this.handleChange}
                         selectAddress={this.selectAddress}
+                        handleChangeSelecteDay={this.handleChangeSelecteDay}
                         searchedAddress={searchedAddress}
                         suggestions={suggestions}
                         listActive={listActive}
-                        btnFormDisabled={btnFormDisabled}
+                        selectedDay={selectedDay}
                     />
                     <main
                         className={classNames(classes.content, classes[`content-${anchorLeft}`],
                         {
                             [classes.contentShift]: openLeft,
                             [classes[`contentShift-${anchorLeft}`]]: openLeft,
-                            [classes.contentChanged]: searched,
+                            [classes.contentChanged]: selectedAddress,
                         })}
                     >
                         <div className={classes.drawerHeader} />
                         
                         <MainContent 
-                            searched={searched} 
+                            selectedAddress={selectedAddress} 
                             setInitMap={setInitMap}
                             selectedInfo={selectedInfo}
                             initialMap={initialMap}

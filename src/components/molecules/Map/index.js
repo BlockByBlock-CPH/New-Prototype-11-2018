@@ -56,7 +56,6 @@ class MapBBB extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        //Typical usage (don't forget to compare props):
         if(this.props.selectedInfo !== prevProps.selectedInfo) {
             this.createCircleLayer(this.props.selectedInfo.coordAddress);
         }else if(this.props.polygonZone !== prevProps.polygonZone){
@@ -117,6 +116,10 @@ class MapBBB extends Component {
         );
         
         const circleFeature = new Feature(circle);  
+
+        const painted = this.paintLayer('rgba(180, 0, 0, 0.5)', 'rgba(180, 0, 0, 1)', 2);
+        circleFeature.setStyle(painted);  
+
         const vectorSource = new VectorSource({
             projection: 'EPSG:4326',
             features: [circleFeature]
@@ -132,9 +135,7 @@ class MapBBB extends Component {
     }
 
     //Add new Layer to the map
-    pushLayer = (layer) => {       
-        const painted = this.paintLayer('rgba(180, 0, 0, 0.7)', 'rgba(180, 0, 0, 1)', 2);
-        layer.setStyle(painted);         
+    pushLayer = (layer) => {             
         this.props.initialMap.map.addLayer(layer);
     }
 

@@ -17,12 +17,12 @@ import { styles } from './styles';
 
 const MainContent = (props) => {
 
-    const { classes, searched, setInitMap, selectedInfo, initialMap, dataMC, polygonZone, totalDataMC } = props;
+    const { classes, selectedAddress, setInitMap, selectedInfo, initialMap, dataMC, polygonZone, totalDataMC } = props;
     
     return(
         <Grid container>
         {
-            searched === true ? 
+            selectedAddress === true ? 
                 <Grid item sm={12}>
                     <Paper className={classes.PaperMap} style={{ height: '40vh'}}>    
                         <Map 
@@ -66,11 +66,11 @@ const MainContent = (props) => {
 
 MainContent.propTypes = {
     classes: PropTypes.object.isRequired,
-    searched: PropTypes.bool.isRequired,
+    selectedAddress: PropTypes.bool.isRequired,
     setInitMap: PropTypes.func.isRequired,
     selectedInfo: PropTypes.object.isRequired,
     initialMap: PropTypes.object.isRequired,
-    dataMC: PropTypes.object.isRequired
+   // dataMC: PropTypes.object.isRequired
 
 };
 

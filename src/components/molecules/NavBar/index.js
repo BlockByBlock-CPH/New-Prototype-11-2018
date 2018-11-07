@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { AppBar, Typography, Toolbar, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+
+//styles
 import { styles } from './styles';
 
 const NavBar = (props) => {
